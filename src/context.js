@@ -28,10 +28,11 @@
 
   var Context = function(argv) {
     this.argv = argv ? argv : {};
-    this.defaultConfig = DEFAULT_CLI_CONFIG;
+    this.defaultConfig = this.argv.use_config_file?this.argv.use_config_file:DEFAULT_CLI_CONFIG;
     this.sourceDirectory = getSourceDirectory(argv);
-    this.manifestFilePath = path.join(this.sourceDirectory, 'chcp.manifest');
-    this.projectsConfigFilePath = path.join(this.sourceDirectory, 'chcp.json');
+    this.destinationDirectory = getDestinationDirectory(argv);
+    this.manifestFilePath = path.join(this.destinationDirectory, 'chcp.manifest');
+    this.projectsConfigFilePath = path.join(this.destinationDirectory, 'chcp.json');
     this.ignoredFiles = getIgnoredFiles();
   };
 
@@ -42,6 +43,15 @@
     }
 
     return path.join(process.cwd(), consoleArgs[1]);
+  }
+
+  function getDestinationDirectory(argv) {
+    var consoleArgs = argv._;
+    if (!consoleArgs || consoleArgs.length !== 3) {
+      return DEFAULT_WWW_FOLDER;
+    }
+
+    return path.join(process.cwd(), consoleArgs[2]);
   }
 
   function getIgnoredFiles() {
